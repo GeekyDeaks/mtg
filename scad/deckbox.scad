@@ -8,19 +8,21 @@ CARDS=60;
 CARD_DEPTH=0.7;  // approx for shielded card
 DEPTH=CARDS * CARD_DEPTH;
 
-WIDTH=95;
+WIDTH=96;
 HEIGHT=69;
 
 FONT_SIZE=min(WIDTH, DEPTH)/3;
 
-SLIDER_HEIGHT=2.5;
-WALL_WIDTH=2;
+SLIDER_HEIGHT=3;
+WALL_WIDTH=2.5;
 WALL_RADIUS=1.5;
 
-REBATE=0.5;
+REBATE=.75;
+
+LOCK_DIAMETER=1.5;
+TOLERANCE=0.15;
 
 use <mana.ttf>
-include <mana-str.scad>
 
 // https://github.com/andrewgioia/mana/blob/master/css/mana.css
 mana_map = [
@@ -70,29 +72,48 @@ module enclosure() {
 
 }
 
+module lock_ball(offset=0) {
+    // tranlate to just off 
+    translate([WIDTH + WALL_WIDTH / 2, 0, HEIGHT + SLIDER_HEIGHT / 2])
+    sphere(d=LOCK_DIAMETER + offset);
+
+    translate([WIDTH + WALL_WIDTH / 2, DEPTH, HEIGHT + SLIDER_HEIGHT / 2])
+    sphere(d=LOCK_DIAMETER + offset);
+
+}
+
 module box() {
     difference() {
         enclosure();
         translate([0, 0, HEIGHT])
-        slider(0.2);
+        slider(TOLERANCE);
+        // little dimple to help locking
+        lock_ball(TOLERANCE);
     }
+    
 }
 
 module lid(mana) {
     // use the enclosure to get the correct
     // external profile
-    translate([0, 0, -HEIGHT])
-    intersection() {
-        enclosure();
-        translate([0, 0, HEIGHT])
-        // emboss the mana
-        difference() {
-            slider();
-            translate([WIDTH/2, DEPTH/2, SLIDER_HEIGHT - 1])
-            linear_extrude(1.1)
-            text(to_mana(mana), size=FONT_SIZE, font="Mana", valign="center", halign="center");
+
+    translate([0, 0, -HEIGHT]) {
+        intersection() {
+            enclosure();
+            translate([0, 0, HEIGHT + 0.001])
+            // emboss the mana
+            difference() {
+                slider();
+                translate([WIDTH/2, DEPTH/2, SLIDER_HEIGHT - 1])
+                linear_extrude(1.1)
+                text(to_mana(mana), size=FONT_SIZE, font="Mana", valign="center", halign="center");
+            }
         }
+        lock_ball();
     }
+
+
+
 }
 
 
