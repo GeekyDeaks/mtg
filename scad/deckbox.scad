@@ -20,6 +20,7 @@ WALL_RADIUS=1.5;
 REBATE=.75;
 
 LOCK_DIAMETER=1.5;
+LOCK_CYLINDER_DISTANCE=1.5;
 TOLERANCE=0.15;
 
 use <mana.ttf>
@@ -79,7 +80,15 @@ module lock_ball(offset=0) {
 
     translate([WIDTH + WALL_WIDTH / 2, DEPTH, HEIGHT + SLIDER_HEIGHT / 2])
     sphere(d=LOCK_DIAMETER + offset);
+}
 
+module lock_cylinder(offset=0) {
+    // tranlate to just off 
+    translate([LOCK_CYLINDER_DISTANCE, -WALL_WIDTH/2, - TOLERANCE])
+    cylinder(d=LOCK_DIAMETER + offset, h=SLIDER_HEIGHT / 2);
+
+    translate([LOCK_CYLINDER_DISTANCE, DEPTH +WALL_WIDTH/2, - TOLERANCE])
+    cylinder(d=LOCK_DIAMETER + offset, h=SLIDER_HEIGHT / 2);
 }
 
 module box() {
@@ -88,8 +97,10 @@ module box() {
         translate([0, 0, HEIGHT])
         slider(TOLERANCE);
         // little dimple to help locking
-        lock_ball(TOLERANCE);
+        //lock_ball(TOLERANCE);
     }
+    translate([0, 0, HEIGHT])
+    lock_cylinder();
     
 }
 
@@ -107,9 +118,10 @@ module lid(mana) {
                 translate([WIDTH/2, DEPTH/2, SLIDER_HEIGHT - 1])
                 linear_extrude(1.1)
                 text(to_mana(mana), size=FONT_SIZE, font="Mana", valign="center", halign="center");
+                lock_cylinder(TOLERANCE);
             }
         }
-        lock_ball();
+        //lock_ball();
     }
 
 
