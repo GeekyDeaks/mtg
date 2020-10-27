@@ -21,3 +21,8 @@ Simple update the `MANA` string with the required symbols from the table below:
 | b    | black |
 | r    | red   |
 | g    | green |
+
+
+# Acknowledgements
+
+https://github.com/andrewgioia/mana
