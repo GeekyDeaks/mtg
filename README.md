@@ -8,9 +8,9 @@ Barebones [deckbox](stl/box.stl) , with adjustable cardcount.  Simply alter the 
 
     openscad -D CARDS=60 -D PART=\"box\" -o box.stl deckbox.scad
 
-You can print the [lids](stl/lid_bw.stl) with various mana symbols:
+You can print the [lids](stl/lid_wb.stl) with various mana symbols:
 
-    openscad -D CARDS=60 -D PART=\"lid\" -D MANA=\"bw\" -o lid_bw.stl deckbox.scad
+    openscad -D CARDS=60 -D PART=\"lid\" -D MANA=\"wb\" -o lid_bw.stl deckbox.scad
 
 Simple update the `MANA` string with the required symbols from the table below:
 
