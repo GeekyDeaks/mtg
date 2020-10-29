@@ -19,9 +19,11 @@ WALL_RADIUS=1.5;
 
 REBATE=.75;
 
-LOCK_DIAMETER=1.5;
-LOCK_CYLINDER_DISTANCE=1.5;
+LOCK_DIAMETER=1.7;
+LOCK_CYLINDER_DISTANCE=2.5;
 TOLERANCE=0.15;
+
+NOTCH_DEPTH = SLIDER_HEIGHT * .7;
 
 use <mana.ttf>
 
@@ -104,9 +106,34 @@ module box() {
     
 }
 
+module grab_notch() {
+    // little notch to help open the lid
+    width = DEPTH / 2;
+    length = width * .5;
+    radius = WALL_RADIUS;
+
+    translate([-length/2, -width/2])
+    difference() {
+        linear_extrude(NOTCH_DEPTH)
+        translate([radius, radius])
+        minkowski() {
+            square( [length - 2 * radius, width - 2 * radius] );
+            circle( radius );
+        };
+
+        translate([-0.001, width, -0.001])
+        rotate([90, 0, 0])
+        linear_extrude(width)
+        polygon([[0,0], [length, 0], [0, NOTCH_DEPTH]    ]);
+    }
+
+}
+
 module lid(mana) {
     // use the enclosure to get the correct
     // external profile
+
+    notch = WIDTH * 0.9;
 
     translate([0, 0, -HEIGHT]) {
         intersection() {
@@ -115,19 +142,21 @@ module lid(mana) {
             // emboss the mana
             difference() {
                 slider();
-                translate([WIDTH/2, DEPTH/2, SLIDER_HEIGHT - 1])
+
+                translate([notch/2, DEPTH/2, SLIDER_HEIGHT - 1])
                 linear_extrude(1.1)
                 text(to_mana(mana), size=FONT_SIZE, font="Mana", valign="center", halign="center");
+
                 lock_cylinder(TOLERANCE);
+                // put a little notch in to help open
+                translate([notch, DEPTH/2, SLIDER_HEIGHT - NOTCH_DEPTH])
+                grab_notch();
             }
         }
         //lock_ball();
     }
 
-
-
 }
-
 
 if(PART=="box") box();
 if(PART=="lid") lid(MANA);
